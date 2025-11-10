@@ -28,7 +28,12 @@ const userSignUp = catchAsyncErrors(async (req, res, next) => {
   user.otpExpire = Date.now() + 10 * 60 * 1000; // 10 min
   await user.save({ validateBeforeSave: false });
 
-  await sendOtpMail(email, otp);
+  try {
+    await sendOtpMail(email, otp);
+  } catch (error) {
+    console.error("CRITICAL: sendOtpMail failed for user:", email);
+    console.error(error);
+  }
 
   res.status(200).json({
     success: true,
